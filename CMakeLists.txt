@@ -59,10 +59,10 @@ if(RDK_INSTALL_INTREE)
   set(RDKit_LibDir "${CMAKE_SOURCE_DIR}/lib")
   set(RDKit_HdrDir "Code") # used in rdkit-config.cmake, path prefix not needed.
 else(RDK_INSTALL_INTREE)
-  set(RDKit_BinDir "bin")
-  set(RDKit_LibDir "lib${LIB_SUFFIX}")
-  set(RDKit_HdrDir "include/rdkit")
-  set(RDKit_ShareDir "share/RDKit")
+  set(RDKit_BinDir "${CMAKE_INSTALL_PREFIX}/bin")
+  set(RDKit_LibDir "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}")
+  set(RDKit_HdrDir "${CMAKE_INSTALL_PREFIX}/include/rdkit")
+  set(RDKit_ShareDir "${CMAKE_INSTALL_PREFIX}/share/RDKit")
 endif(RDK_INSTALL_INTREE)
 
 if(RDK_BUILD_SWIG_WRAPPERS)
@@ -119,7 +119,7 @@ if(RDK_BUILD_PYTHON_WRAPPERS)
     # From http://plplot.svn.sourceforge.net/viewvc/plplot/trunk/cmake/modules/python.cmake?revision=11014
     execute_process(
       COMMAND
-      ${PYTHON_EXECUTABLE} -c "from distutils import sysconfig; print sysconfig.get_python_lib(1,0,prefix='${CMAKE_INSTALL_PREFIX}')"
+      ${PYTHON_EXECUTABLE} -c "from distutils import sysconfig; print sysconfig.get_python_lib()"
       OUTPUT_VARIABLE PYTHON_INSTDIR
       OUTPUT_STRIP_TRAILING_WHITESPACE
     )
