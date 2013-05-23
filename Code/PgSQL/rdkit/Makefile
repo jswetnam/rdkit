@@ -5,11 +5,11 @@ STATIC_LINK=1
 
 ifeq ($(USE_INCHI),1)
   INCHILIBS=-lRDInchiLib -lInchi
-  INCHIFLAGS=-I${RDKIT}/External -DBUILD_INCHI_SUPPORT  
+  INCHIFLAGS=-I${RDKIT}/External -DBUILD_INCHI_SUPPORT
   INCHIREGRESS=inchi
 endif
 
-RDKLIBS       = ${INCHILIBS} -lChemTransforms -lFileParsers -lSmilesParse -lFingerprints -lSubgraphs -lSubstructMatch  -lDescriptors -lPartialCharges -lGraphMol -lDataStructs -lRDGeometryLib -lRDGeneral 
+RDKLIBS       = ${INCHILIBS} -lChemTransforms -lFileParsers -lSmilesParse -lFingerprints -lSubgraphs -lSubstructMatch  -lDescriptors -lPartialCharges -lGraphMol -lDataStructs -lRDGeometryLib -lRDGeneral
 
 ifeq ($(STATIC_LINK),1)
   SHLIB_LINK += -L${RDKIT}/lib $(addsuffix _static,${RDKLIBS})
@@ -22,10 +22,10 @@ ifndef BOOSTHOME
   BOOSTHOME=/usr/local/include
 endif
 
-PG_CPPFLAGS = -I${BOOSTHOME} -I${RDKIT}/Code -I${RDKIT} -DRDKITVER='"006000"' ${INCHIFLAGS} #-DUSE_BUILTIN_POPCOUNT -msse4.2
+PG_CPPFLAGS = -I${BOOSTHOME} -I${RDKIT}/Code -I${RDKIT} -DRDKITVER='"007000"' ${INCHIFLAGS} #-DUSE_BUILTIN_POPCOUNT -msse4.2
 
 CPLUSPLUSFLAGS = $(filter-out -fexcess-precision=standard -Wmissing-prototypes -Wdeclaration-after-statement, $(CFLAGS))
-CPLUSPLUSFLAGS += -Wno-unused-function 
+CPLUSPLUSFLAGS += -Wno-unused-function
 #CPLUSPLUSFLAGS += -march=native
 CPLUSPLUSFLAGS += $(PG_CPPFLAGS)
 CPLUSPLUSFLAGS := $(filter-out -fexcess-precision=standard,$(CPLUSPLUSFLAGS))
@@ -60,7 +60,7 @@ OCC := $(CC)
 CC = $(CXX)
 # we build .c files using this original defn:
 %.o : %.c
-	$(OCC) $(CPPFLAGS) -fPIC -c -o $@ $< 
+	$(OCC) $(CPPFLAGS) -fPIC -c -o $@ $<
 
 %.o : %.cpp
-	$(CXX) $(CPLUSPLUSFLAGS) $(CPPFLAGS) -fPIC -c -o $@ $< 
+	$(CXX) $(CPLUSPLUSFLAGS) $(CPPFLAGS) -fPIC -c -o $@ $<

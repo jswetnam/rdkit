@@ -661,6 +661,41 @@ False
 >>> m.HasSubstructMatch(Chem.MolFromSmarts('COc')) #<- need an aromatic C
 True
 
+
+Stereochemistry in substructure matches
+=======================================
+
+By default information about stereochemistry is not used in
+substructure searches:
+
+>>> m = Chem.MolFromSmiles('CC[C@H](F)Cl')
+>>> m.HasSubstructMatch(Chem.MolFromSmiles('C[C@H](F)Cl'))
+True
+>>> m.HasSubstructMatch(Chem.MolFromSmiles('C[C@@H](F)Cl'))
+True
+>>> m.HasSubstructMatch(Chem.MolFromSmiles('CC(F)Cl'))
+True
+
+But this can be changed via the `useChirality` argument:
+
+>>> m.HasSubstructMatch(Chem.MolFromSmiles('C[C@H](F)Cl'),useChirality=True)
+True
+>>> m.HasSubstructMatch(Chem.MolFromSmiles('C[C@@H](F)Cl'),useChirality=True)
+False
+>>> m.HasSubstructMatch(Chem.MolFromSmiles('CC(F)Cl'),useChirality=True)
+True
+
+Notice that when `useChirality` is set a non-chiral query **does** match a chiral
+molecule. The same is not true for a chiral query and a non-chiral molecule:
+
+>>> m.HasSubstructMatch(Chem.MolFromSmiles('CC(F)Cl'))
+True
+>>> m2 = Chem.MolFromSmiles('CCC(F)Cl')
+>>> m2.HasSubstructMatch(Chem.MolFromSmiles('C[C@H](F)Cl'),useChirality=True)
+False
+
+
+
 Chemical Transformations
 ************************
 
@@ -864,9 +899,9 @@ Topological Fingerprints
 ... Chem.MolFromSmiles('COC')]
 >>> fps = [FingerprintMols.FingerprintMol(x) for x in ms]
 >>> DataStructs.FingerprintSimilarity(fps[0],fps[1])
-0.666...
+0.6...
 >>> DataStructs.FingerprintSimilarity(fps[0],fps[2])
-0.444...
+0.4...
 >>> DataStructs.FingerprintSimilarity(fps[1],fps[2])
 0.25
 
@@ -895,7 +930,7 @@ The default similarity metric used by
 similarity.  One can use different similarity metrics:
 
 >>> DataStructs.FingerprintSimilarity(fps[0],fps[1], metric=DataStructs.DiceSimilarity)
-0.8
+0.75
 
 Available similarity metrics include Tanimoto, Dice, Cosine, Sokal, Russel, Kulczynski, McConnaughey, and Tversky.
 
@@ -2027,7 +2062,7 @@ License
 
 .. image:: images/picture_5.png
 
-This document is copyright (C) 2007-2011 by Greg Landrum
+This document is copyright (C) 2007-2013 by Greg Landrum
 
 This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 License.
 To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/ or send a letter to Creative Commons, 543 Howard Street, 5th Floor, San Francisco, California, 94105, USA.

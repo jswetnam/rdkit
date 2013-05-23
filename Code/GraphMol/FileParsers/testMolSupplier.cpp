@@ -701,14 +701,78 @@ void testSDSupplierEnding() {
 
 void testSuppliersEmptyFile() {
   std::string rdbase = getenv("RDBASE");
-  std::string infile = rdbase + "/Code/GraphMol/FileParsers/test_data/empty.sdf";
-  SDMolSupplier reader(infile);
-  TEST_ASSERT(reader.atEnd());
-
-  infile = rdbase + "/Code/GraphMol/FileParsers/test_data/empty.smi";
-  SmilesMolSupplier smiSup(infile, ",", 0, -1);
-  TEST_ASSERT(smiSup.atEnd());
-
+  {
+    std::string infile = rdbase + "/Code/GraphMol/FileParsers/test_data/empty.sdf";
+    SDMolSupplier reader(infile);
+    TEST_ASSERT(reader.atEnd());
+  }
+  {
+    std::string infile = rdbase + "/Code/GraphMol/FileParsers/test_data/empty.smi";
+    SmilesMolSupplier smiSup(infile, ",", 0, -1);
+    TEST_ASSERT(smiSup.atEnd());
+  }
+  // tests for GitHub issue 19:
+  {
+    std::string infile = rdbase + "/Code/GraphMol/FileParsers/test_data/empty2.sdf";
+    SDMolSupplier reader(infile);
+    TEST_ASSERT(reader.length()==0);
+  }
+  {
+    std::string infile = rdbase + "/Code/GraphMol/FileParsers/test_data/empty2.sdf";
+    SDMolSupplier reader(infile);
+    TEST_ASSERT(reader.atEnd());
+    bool failed=false;
+    try {
+      reader[0];
+    } catch (FileParseException &) {
+      failed=true;
+    }
+    TEST_ASSERT(failed);
+    TEST_ASSERT(reader.length()==0);
+  }
+  {
+    std::string infile = rdbase + "/Code/GraphMol/FileParsers/test_data/empty2.sdf";
+    SDMolSupplier reader(infile);
+    bool failed=false;
+    try {
+      reader[0];
+    } catch (FileParseException &) {
+      failed=true;
+    }
+    TEST_ASSERT(failed);
+    TEST_ASSERT(reader.length()==0);
+  }
+  {
+    SDMolSupplier reader;
+    reader.setData("");
+    TEST_ASSERT(reader.atEnd());
+    bool failed=false;
+    try {
+      reader[0];
+    } catch (FileParseException &) {
+      failed=true;
+    }
+    TEST_ASSERT(failed);
+    TEST_ASSERT(reader.length()==0);
+  }
+  {
+    SDMolSupplier reader;
+    reader.setData("");
+    bool failed=false;
+    try {
+      reader[0];
+    } catch (FileParseException &) {
+      failed=true;
+    }
+    TEST_ASSERT(failed);
+    TEST_ASSERT(reader.length()==0);
+  }
+  {
+    SDMolSupplier reader;
+    reader.setData("");
+    TEST_ASSERT(reader.length()==0);
+  }
+  
   
 }
 
@@ -1599,7 +1663,7 @@ void testGetItemText() {
     TDTMolSupplier tdtsup(fname);
     TEST_ASSERT(tdtsup.length()==10);
   
-      ROMol *mol=tdtsup[9];
+    ROMol *mol=tdtsup[9];
     TEST_ASSERT(mol);
     delete mol;
     TEST_ASSERT(tdtsup.atEnd());
@@ -1788,6 +1852,26 @@ void testSkipLines() {
 }
 
 
+void testGitHub23() {
+  std::string rdbase = getenv("RDBASE");
+  std::string ofile = rdbase + "/Code/GraphMol/FileParsers/test_data/blah.sdf";
+  SDWriter *writer = new SDWriter(ofile);
+
+  ROMol *mol = SmilesToMol("CCCC");
+  INT_VECT iv;
+  iv.push_back(1);
+  iv.push_back(2);  
+  mol->setProp("pval",iv);
+  writer->write(*mol);
+  delete mol;
+
+  writer->flush();
+  delete writer;
+}
+
+
+
+
 int main() {
   RDLog::InitLogs();
 
@@ -1933,6 +2017,11 @@ int main() {
   BOOST_LOG(rdErrorLog) << "-----------------------------------------\n";
   testSkipLines();
   BOOST_LOG(rdErrorLog) <<"Finished: testSkipLines()\n";
+  BOOST_LOG(rdErrorLog) << "-----------------------------------------\n\n";
+
+  BOOST_LOG(rdErrorLog) << "-----------------------------------------\n";
+  testGitHub23();
+  BOOST_LOG(rdErrorLog) <<"Finished: testGitHub23()\n";
   BOOST_LOG(rdErrorLog) << "-----------------------------------------\n\n";
 
   return 0;
