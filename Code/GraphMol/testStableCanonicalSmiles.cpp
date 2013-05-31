@@ -28,27 +28,28 @@
 #include <iostream>
 
 using namespace RDKit;
-using namespace std;
+using std::string;
+using std::set;
 
 void testStableCanonicalSmilesFromCHEMBL451537(){
-  std::string rdbase = getenv("RDBASE");
-  RWMol *m;
-  m = MolFileToMol(rdbase + "Code/GraphMol/test_data/CHEMBL451537.mol");
-  std::set canon_smi;
+  string rdbase = getenv("RDBASE");
+  set<string> canon_smi;
   for (int i=0; i < 1000; ++i) {
-      canon_smi.insert(MolToSmiles(*mol,
-                                   true,  # Do isomeric SMILES
-                                   true,  # Canonical SMILES
-                                   false));  # All bonds explicit
-  }
-  TEST_ASSERT(canon_smi.size()==1);
+    RWMol* mol = MolFileToMol(rdbase + "Code/GraphMol/test_data/CHEMBL451537.mol");
+    string smi = MolToSmiles(*mol,
+        true,  // Do isomeric SMILES
+        true,  // Canonical SMILES
+        false);
+    BOOST_LOG(rdInfoLog) << smi << "\n";
 
+    canon_smi.insert(smi);  // All bonds explicit
+    TEST_ASSERT(canon_smi.size()==1);
+  }
 };
 
 
 int main(){
   RDLog::InitLogs();
-
   testStableCanonicalSmilesFromCHEMBL451537();
   return 0;
 }
