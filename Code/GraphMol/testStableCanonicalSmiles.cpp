@@ -1,18 +1,5 @@
-
-//  $Id$
-//
-//   Copyright (C) 2007-2010 Greg Landrum
-//
-//   @@ All Rights Reserved @@
-//  This file is part of the RDKit.
-//  The contents are covered by the terms of the BSD license
-//  which is included in the file license.txt, found at the root
-//  of the RDKit source tree.
-//
-//
-// There are chirality test cases spread all over the place. Many of the
-// tests here are repeats, but it's good to have everything in one place.
-//
+// Test an issue with generating stable canonical SMILES
+// from molecules with two neighboring double bonds
 #include <set>
 
 #include <RDGeneral/utils.h>
